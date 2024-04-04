@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reaction Time Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/jspsych@6.3.1/jspsych.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspsych@6.3.1/plugins/jspsych-html-keyboard-response.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspsych@6.3.1/plugins/jspsych-html-button-response.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspsych@6.3.1/plugins/jspsych-image-keyboard-response.js"></script>
+  </head>
+  <body>
+    <script>
+      // Define the trial presenting the instruction
+      var instructionTrial = {
+        type: "html-keyboard-response",
+        stimulus:
+          'Press the letter "f" as fast as you can when the cat appears!',
+        choices: jsPsych.NO_KEYS,
+        trial_duration: 2000, // Adjust the duration of the instruction (in milliseconds)
+      };
+
+      var blankScreenTrial = {
+        type: "html-keyboard-response",
+        stimulus: "", // Empty stimulus to show blank screen
+        choices: jsPsych.NO_KEYS,
+        trial_duration: 500, // Blank screen for half a second (in milliseconds)
+        response_ends_trial: false, // Do not end trial on response
+      };
+
+      // Define the image flash trial
+      var imageFlashTrial = {
+        type: "image-keyboard-response",
+        stimulus: "images/cat.jpg", // Path to your image file
+        choices: jsPsych.NO_KEYS,
+        trial_duration: 33, // Image flash (in milliseconds)
+        response_ends_trial: false, // Do not end trial on response
+      };
+
+      // Define the trial recording the response
+      var responseTrial = {
+        type: "html-keyboard-response",
+        stimulus: "",
+        choices: ["f", "j"],
+        prompt: "",
+        on_finish: function (data) {
+          var rt = data.rt; // Reaction time in milliseconds
+          console.log("Reaction time: " + rt + " milliseconds");
+        },
+      };
+
+      // Define the completion trial
+      var completionTrial = {
+        type: "html-keyboard-response",
+        stimulus: "All trials completed, refresh to play again!",
+        choices: jsPsych.NO_KEYS,
+      };
+
+      // Define the timeline with instruction and response trials
+      var timeline = [];
+      var numTrials = 5;
+
+      timeline.push(instructionTrial); // Instruction trial
+      for (var i = 0; i < numTrials; i++) {
+        timeline.push(blankScreenTrial);
+        timeline.push(imageFlashTrial);
+        timeline.push(responseTrial);
+      }
+      timeline.push(completionTrial); // Add completion trial at the end
+
+      // Initialize jsPsych
+      jsPsych.init({
+        timeline: timeline,
+        on_finish: function () {
+          console.log("All trials completed!");
+        },
+      });
+    </script>
+  </body>
+</html>
